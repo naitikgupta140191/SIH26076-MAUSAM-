@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 
@@ -16,8 +16,7 @@ class SavedLocationResponse(SavedLocationBase):
     id: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class UserPreferenceBase(BaseModel):
     default_persona: str = "health"
@@ -29,8 +28,7 @@ class UserPreferenceResponse(UserPreferenceBase):
     id: int
     user_id: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class CustomAlertBase(BaseModel):
     location_name: str
@@ -50,8 +48,7 @@ class CustomAlertResponse(CustomAlertBase):
     is_active: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Weather API Data Schemas
 class WeatherLocation(BaseModel):
@@ -94,3 +91,26 @@ class PersonaInsight(BaseModel):
     recommendations: List[str]
     metrics: Dict[str, Any]
     detailed_cards: List[Dict[str, Any]]
+
+# ── Auth / User Account Schemas ──────────────────────────────────────────────
+class UserRegister(BaseModel):
+    name: str
+    email: str
+    password: str
+    primary_persona: str = "health"
+    selected_personas: List[str] = ["health"]
+    custom_trade: Optional[str] = None
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+class UserAuthResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    primary_persona: str
+    selected_personas: str   # stored as JSON string in DB
+    custom_trade: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)

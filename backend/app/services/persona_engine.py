@@ -1,5 +1,6 @@
 from typing import Dict, Any, List
 import math
+import random
 from datetime import datetime
 
 def process_persona_insights(persona: str, raw_env: Dict[str, Any], city_name: str = "") -> Dict[str, Any]:

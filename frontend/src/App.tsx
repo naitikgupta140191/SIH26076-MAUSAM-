@@ -29,7 +29,7 @@ export const App: React.FC = () => {
     const saved = localStorage.getItem('mausam_user') || localStorage.getItem('auracast_user');
     return saved ? JSON.parse(saved) : null;
   });
-  const [isAuthOpen, setIsAuthOpen] = useState(true);
+  const [isAuthOpen, setIsAuthOpen] = useState(true); // always require login on every visit
 
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);

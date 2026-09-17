@@ -128,6 +128,50 @@ export async function createCustomAlertApi(alert: CustomAlert): Promise<CustomAl
   return alert;
 }
 
+// ── Auth API ──────────────────────────────────────────────────────────────────
+
+type AuthResult = { success: boolean; user?: Record<string, unknown>; error?: string };
+
+export async function registerUserApi(data: {
+  name: string;
+  email: string;
+  password: string;
+  primary_persona: string;
+  selected_personas: string[];
+  custom_trade?: string;
+}): Promise<AuthResult> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) return { success: true, user: await res.json() };
+    const err = await res.json().catch(() => ({ detail: 'Registration failed.' }));
+    return { success: false, error: (err as { detail?: string }).detail || 'Registration failed.' };
+  } catch {
+    return { success: false, error: 'Cannot connect to server. Make sure the backend is running on port 8000.' };
+  }
+}
+
+export async function loginUserApi(data: {
+  email: string;
+  password: string;
+}): Promise<AuthResult> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) return { success: true, user: await res.json() };
+    const err = await res.json().catch(() => ({ detail: 'Login failed.' }));
+    return { success: false, error: (err as { detail?: string }).detail || 'Login failed.' };
+  } catch {
+    return { success: false, error: 'Cannot connect to server. Make sure the backend is running on port 8000.' };
+  }
+}
+
 function generateFallbackDashboard(lat: number, lon: number, persona: PersonaType, city: string): DashboardData {
   const current_weather = {
     temp_c: 26.5,

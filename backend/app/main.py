@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from .routes import weather, user, alerts
+from .routes import weather, user, alerts, auth
 
 # Initialize DB tables
 Base.metadata.create_all(bind=engine)
@@ -22,6 +22,7 @@ app.add_middleware(
 )
 
 # Register routers
+app.include_router(auth.router)
 app.include_router(weather.router)
 app.include_router(user.router)
 app.include_router(alerts.router)

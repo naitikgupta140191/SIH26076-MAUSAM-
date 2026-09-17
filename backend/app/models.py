@@ -13,6 +13,18 @@ class SavedLocation(Base):
     is_favorite = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    email = Column(String, unique=True, index=True)
+    password_hash = Column(String)
+    primary_persona = Column(String, default="health")
+    selected_personas = Column(Text, default='["health"]') # JSON string of selected personas
+    custom_trade = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
 class UserPreference(Base):
     __tablename__ = "user_preferences"
 
