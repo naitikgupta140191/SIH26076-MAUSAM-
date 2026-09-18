@@ -71,6 +71,13 @@ export const App: React.FC = () => {
     setActivePersona(initial);
   };
 
+  const handleLogout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('mausam_user');
+    localStorage.removeItem('auracast_user');
+    setIsAuthOpen(true);
+  };
+
   const handleSelectLocation = (loc: LocationItem) => {
     setCurrentCity(loc.name);
     setLat(loc.latitude);
@@ -109,7 +116,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen text-slate-800 flex flex-col font-sans">
       {/* Header Bar */}
       <Header
         currentCity={currentCity}
@@ -119,27 +126,28 @@ export const App: React.FC = () => {
         onOpenEventPlanner={() => setIsEventPlannerOpen(true)}
         currentUser={currentUser}
         onOpenAuthModal={() => setIsAuthOpen(true)}
+        onLogout={handleLogout}
       />
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6">
         {/* User Greeting Banner if Logged In */}
         {currentUser && (
-          <div className="glass-card rounded-2xl p-4 mb-4 border border-cyan-500/30 bg-slate-900/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="glass-card rounded-2xl p-4 mb-4 border border-amber-200 bg-white/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-cyan-950 text-cyan-400 border border-cyan-800">
+              <div className="p-2 rounded-xl bg-amber-100 text-amber-700 border border-amber-200">
                 <User className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                   Welcome back, {currentUser.name}!
                 </h3>
                 <div className="flex flex-wrap items-center gap-1.5 mt-1">
-                  <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                    <Briefcase className="w-3.5 h-3.5 text-cyan-400" /> Active Domains:
+                  <span className="text-[10px] text-slate-700 flex items-center gap-1">
+                    <Briefcase className="w-3.5 h-3.5 text-amber-600" /> Active Domains:
                   </span>
                   {(currentUser.selectedPersonas || [currentUser.primaryPersona]).map(p => (
-                    <span key={p} className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 font-mono uppercase">
+                    <span key={p} className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200 font-mono uppercase">
                       {p === 'custom' ? currentUser.customTrade || 'Custom' : p}
                     </span>
                   ))}
@@ -149,7 +157,7 @@ export const App: React.FC = () => {
 
             <button
               onClick={() => setIsAuthOpen(true)}
-              className="text-xs font-semibold text-cyan-400 hover:underline shrink-0"
+              className="text-xs font-semibold text-amber-700 hover:underline shrink-0"
             >
               Manage Domains & Profile
             </button>
@@ -165,8 +173,8 @@ export const App: React.FC = () => {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 space-y-4">
-            <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
-            <p className="text-sm font-semibold text-slate-300">
+            <Loader2 className="w-10 h-10 text-amber-500 animate-spin" />
+            <p className="text-sm font-semibold text-slate-700">
               Computing {activePersona.toUpperCase()} persona algorithms for {currentCity}...
             </p>
           </div>
@@ -189,18 +197,18 @@ export const App: React.FC = () => {
             <DailyForecastGrid dailyForecast={dashboardData.daily_forecast} />
           </div>
         ) : (
-          <div className="text-center py-16 text-slate-400">
+          <div className="text-center py-16 text-slate-700">
             Failed to load weather data. Please retry.
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="glass-card border-t border-slate-900 py-6 px-4 text-center text-xs text-slate-500">
+      <footer className="glass-card border-t border-slate-900 py-6 px-4 text-center text-xs text-slate-700">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <CloudSun className="w-4 h-4 text-cyan-400" />
-            <span className="font-bold text-slate-400">Mausam Platform</span>
+            <CloudSun className="w-4 h-4 text-amber-500" />
+            <span className="font-bold text-slate-700">Mausam Platform</span>
             <span>• Multi-Domain Weather & Environmental Intelligence</span>
           </div>
           <div>

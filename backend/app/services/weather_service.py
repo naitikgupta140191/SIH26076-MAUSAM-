@@ -32,121 +32,284 @@ WMO_CODES = {
     96: ("Thunderstorm with hail", "CloudLightning"),
 }
 
+import re
+
+INDIAN_FALLBACK_CITIES: List[Dict[str, Any]] = [
+    {"name": "Connaught Place, New Delhi (PIN: 110001)", "country": "India", "admin1": "Delhi", "latitude": 28.6333, "longitude": 77.2167, "timezone": "Asia/Kolkata"},
+    {"name": "New Delhi", "country": "India", "admin1": "Delhi", "latitude": 28.6139, "longitude": 77.2090, "timezone": "Asia/Kolkata"},
+    {"name": "Noida, Uttar Pradesh (PIN: 201301)", "country": "India", "admin1": "Uttar Pradesh", "latitude": 28.5540, "longitude": 77.3795, "timezone": "Asia/Kolkata"},
+    {"name": "Gurugram, Haryana (PIN: 122001)", "country": "India", "admin1": "Haryana", "latitude": 28.4595, "longitude": 77.0266, "timezone": "Asia/Kolkata"},
+    {"name": "Fort, Mumbai (PIN: 400001)", "country": "India", "admin1": "Maharashtra", "latitude": 18.9333, "longitude": 72.8333, "timezone": "Asia/Kolkata"},
+    {"name": "Mumbai", "country": "India", "admin1": "Maharashtra", "latitude": 19.0760, "longitude": 72.8777, "timezone": "Asia/Kolkata"},
+    {"name": "Pune, Maharashtra (PIN: 411001)", "country": "India", "admin1": "Maharashtra", "latitude": 18.5204, "longitude": 73.8567, "timezone": "Asia/Kolkata"},
+    {"name": "MG Road, Bengaluru (PIN: 560001)", "country": "India", "admin1": "Karnataka", "latitude": 12.9750, "longitude": 77.6083, "timezone": "Asia/Kolkata"},
+    {"name": "Bengaluru", "country": "India", "admin1": "Karnataka", "latitude": 12.9716, "longitude": 77.5946, "timezone": "Asia/Kolkata"},
+    {"name": "Kolkata, West Bengal (PIN: 700001)", "country": "India", "admin1": "West Bengal", "latitude": 22.5726, "longitude": 88.3639, "timezone": "Asia/Kolkata"},
+    {"name": "Chennai, Tamil Nadu (PIN: 600001)", "country": "India", "admin1": "Tamil Nadu", "latitude": 13.0827, "longitude": 80.2707, "timezone": "Asia/Kolkata"},
+    {"name": "Hyderabad, Telangana (PIN: 500001)", "country": "India", "admin1": "Telangana", "latitude": 17.3850, "longitude": 78.4867, "timezone": "Asia/Kolkata"},
+    {"name": "Jaipur, Rajasthan (PIN: 302001)", "country": "India", "admin1": "Rajasthan", "latitude": 26.9124, "longitude": 75.7873, "timezone": "Asia/Kolkata"},
+    {"name": "Ahmedabad, Gujarat (PIN: 380001)", "country": "India", "admin1": "Gujarat", "latitude": 23.0225, "longitude": 72.5714, "timezone": "Asia/Kolkata"},
+    {"name": "Lucknow, Uttar Pradesh (PIN: 226001)", "country": "India", "admin1": "Uttar Pradesh", "latitude": 26.8467, "longitude": 80.9462, "timezone": "Asia/Kolkata"},
+    {"name": "Varanasi, Uttar Pradesh (PIN: 221001)", "country": "India", "admin1": "Uttar Pradesh", "latitude": 25.3176, "longitude": 82.9739, "timezone": "Asia/Kolkata"},
+    {"name": "Chandigarh (PIN: 160017)", "country": "India", "admin1": "Chandigarh", "latitude": 30.7333, "longitude": 76.7794, "timezone": "Asia/Kolkata"},
+    {"name": "Srinagar, Jammu & Kashmir (PIN: 190001)", "country": "India", "admin1": "Jammu and Kashmir", "latitude": 34.0837, "longitude": 74.7973, "timezone": "Asia/Kolkata"},
+    {"name": "Shimla, Himachal Pradesh (PIN: 171001)", "country": "India", "admin1": "Himachal Pradesh", "latitude": 31.1048, "longitude": 77.1734, "timezone": "Asia/Kolkata"},
+    {"name": "Manali, Himachal Pradesh (PIN: 175131)", "country": "India", "admin1": "Himachal Pradesh", "latitude": 32.2432, "longitude": 77.1892, "timezone": "Asia/Kolkata"},
+    {"name": "Kasol, Himachal Pradesh (PIN: 175105)", "country": "India", "admin1": "Himachal Pradesh", "latitude": 32.0104, "longitude": 77.3166, "timezone": "Asia/Kolkata"},
+    {"name": "Rishikesh, Uttarakhand (PIN: 249201)", "country": "India", "admin1": "Uttarakhand", "latitude": 30.0869, "longitude": 78.2676, "timezone": "Asia/Kolkata"},
+    {"name": "Dehradun, Uttarakhand (PIN: 248001)", "country": "India", "admin1": "Uttarakhand", "latitude": 30.3165, "longitude": 78.0322, "timezone": "Asia/Kolkata"},
+    {"name": "Bhopal, Madhya Pradesh (PIN: 462001)", "country": "India", "admin1": "Madhya Pradesh", "latitude": 23.2599, "longitude": 77.4126, "timezone": "Asia/Kolkata"},
+    {"name": "Indore, Madhya Pradesh (PIN: 452001)", "country": "India", "admin1": "Madhya Pradesh", "latitude": 22.7196, "longitude": 75.8577, "timezone": "Asia/Kolkata"},
+    {"name": "Patna, Bihar (PIN: 800001)", "country": "India", "admin1": "Bihar", "latitude": 25.5941, "longitude": 85.1376, "timezone": "Asia/Kolkata"},
+    {"name": "Kochi, Kerala (PIN: 682001)", "country": "India", "admin1": "Kerala", "latitude": 9.9312, "longitude": 76.2673, "timezone": "Asia/Kolkata"},
+    {"name": "Guwahati, Assam (PIN: 781001)", "country": "India", "admin1": "Assam", "latitude": 26.1445, "longitude": 91.7362, "timezone": "Asia/Kolkata"},
+    {"name": "Mawlynnong, Meghalaya (PIN: 793110)", "country": "India", "admin1": "Meghalaya", "latitude": 25.2016, "longitude": 91.9163, "timezone": "Asia/Kolkata"},
+    {"name": "Ooty, Tamil Nadu (PIN: 643001)", "country": "India", "admin1": "Tamil Nadu", "latitude": 11.4102, "longitude": 76.6950, "timezone": "Asia/Kolkata"},
+    {"name": "Panaji, Goa (PIN: 403001)", "country": "India", "admin1": "Goa", "latitude": 15.4909, "longitude": 73.8278, "timezone": "Asia/Kolkata"},
+    {"name": "Bhubaneswar, Odisha (PIN: 751001)", "country": "India", "admin1": "Odisha", "latitude": 20.2961, "longitude": 85.8245, "timezone": "Asia/Kolkata"},
+]
+
+HTTP_HEADERS = {
+    "User-Agent": "MausamEnvironmentalIntelligence/2.0 (contact@mausam.app; https://github.com/mausam)"
+}
+
 async def search_pincode(query: str) -> List[Dict[str, Any]]:
+    """
+    Search specifically for Indian 6-digit PIN codes using OpenStreetMap Nominatim
+    with fallback to India Post API. Only returns locations inside India.
+    """
     clean_code = query.strip()
-    # Try Zippopotam API for India / US postal codes
+    pin_match = re.search(r'\b[1-9][0-9]{5}\b', clean_code)
+    pin = pin_match.group(0) if pin_match else (clean_code if clean_code.isdigit() and len(clean_code) == 6 else None)
+
+    if not pin:
+        return []
+
+    results: List[Dict[str, Any]] = []
+    seen_coords = set()
+
+    # 1. Primary: Nominatim postal code search for India
     try:
-        async with httpx.AsyncClient(timeout=4.0) as client:
-            country_code = "in" if clean_code.isdigit() and len(clean_code) == 6 else ("us" if clean_code.isdigit() and len(clean_code) == 5 else "in")
-            resp = await client.get(f"https://api.zippopotam.us/{country_code}/{clean_code}")
+        async with httpx.AsyncClient(headers=HTTP_HEADERS, timeout=4.5) as client:
+            resp = await client.get(
+                "https://nominatim.openstreetmap.org/search",
+                params={
+                    "postalcode": pin,
+                    "country": "India",
+                    "format": "json",
+                    "addressdetails": 1,
+                    "limit": 5
+                }
+            )
             if resp.status_code == 200:
                 data = resp.json()
-                places = data.get("places", [])
-                results = []
-                for p in places:
-                    place_name = p.get("place name", "")
-                    state = p.get("state", "")
-                    lat = float(p.get("latitude", 0))
-                    lon = float(p.get("longitude", 0))
-                    if lat != 0 and lon != 0:
+                for item in data:
+                    addr = item.get("address", {})
+                    # Ensure location is strictly inside India
+                    country_code = addr.get("country_code", "").lower()
+                    if country_code != "in":
+                        continue
+
+                    place_name = (
+                        addr.get("city")
+                        or addr.get("town")
+                        or addr.get("village")
+                        or addr.get("suburb")
+                        or addr.get("hamlet")
+                        or addr.get("county")
+                        or addr.get("state_district")
+                        or f"PIN {pin}"
+                    )
+                    state = addr.get("state", "")
+                    lat = float(item["lat"])
+                    lon = float(item["lon"])
+                    coord_key = (round(lat, 3), round(lon, 3))
+
+                    if coord_key not in seen_coords:
+                        seen_coords.add(coord_key)
+                        formatted_name = f"{place_name}, {state} (PIN: {pin})" if state else f"{place_name} (PIN: {pin})"
                         results.append({
-                            "name": f"{place_name}, {state} (PIN: {clean_code})",
-                            "country": data.get("country", "India"),
+                            "name": formatted_name,
+                            "country": "India",
                             "admin1": state,
                             "latitude": lat,
                             "longitude": lon,
-                            "timezone": "Asia/Kolkata" if country_code == "in" else "UTC"
+                            "timezone": "Asia/Kolkata"
                         })
                 if results:
                     return results
     except Exception as e:
-        print(f"Pincode geocoding error: {e}")
+        print(f"Nominatim pincode lookup error: {e}")
 
-    # Fallback to India Postal API
+    # 2. Secondary fallback: India Post API
     try:
-        if clean_code.isdigit() and len(clean_code) == 6:
-            async with httpx.AsyncClient(timeout=4.0) as client:
-                res = await client.get(f"https://api.postalpincode.in/pincode/{clean_code}")
-                if res.status_code == 200:
-                    data = res.json()
-                    if isinstance(data, list) and len(data) > 0 and data[0].get("Status") == "Success":
-                        post_offices = data[0].get("PostOffice", [])
-                        if post_offices:
-                            po = post_offices[0]
-                            po_name = po.get('Name', '')
-                            district = po.get('District', '')
-                            state = po.get('State', '')
-                            # Geocode post office location via Open-Meteo
-                            g_res = await client.get(
-                                OPEN_METEO_GEOCODING_URL,
-                                params={"name": f"{po_name} {state}", "count": 1, "language": "en", "format": "json"}
+        async with httpx.AsyncClient(headers=HTTP_HEADERS, timeout=4.5) as client:
+            res = await client.get(f"https://api.postalpincode.in/pincode/{pin}")
+            if res.status_code == 200:
+                data = res.json()
+                if isinstance(data, list) and len(data) > 0 and data[0].get("Status") == "Success":
+                    post_offices = data[0].get("PostOffice", [])
+                    if post_offices:
+                        # Pick top distinct post offices
+                        for po in post_offices[:3]:
+                            po_name = po.get("Name", "")
+                            district = po.get("District", "")
+                            state = po.get("State", "")
+
+                            # Geocode post office or district inside India
+                            geo_resp = await client.get(
+                                "https://nominatim.openstreetmap.org/search",
+                                params={
+                                    "q": f"{district or po_name}, {state}",
+                                    "countrycodes": "in",
+                                    "format": "json",
+                                    "limit": 1
+                                }
                             )
-                            if g_res.status_code == 200:
-                                g_data = g_res.json()
-                                if g_data.get("results"):
-                                    m = g_data["results"][0]
-                                    return [{
-                                        "name": f"{po_name}, {district} (PIN: {clean_code})",
+                            if geo_resp.status_code == 200 and geo_resp.json():
+                                m = geo_resp.json()[0]
+                                lat = float(m.get("lat"))
+                                lon = float(m.get("lon"))
+                                coord_key = (round(lat, 3), round(lon, 3))
+                                if coord_key not in seen_coords:
+                                    seen_coords.add(coord_key)
+                                    results.append({
+                                        "name": f"{po_name}, {district} (PIN: {pin})",
                                         "country": "India",
                                         "admin1": state,
-                                        "latitude": m.get("latitude"),
-                                        "longitude": m.get("longitude"),
+                                        "latitude": lat,
+                                        "longitude": lon,
                                         "timezone": "Asia/Kolkata"
-                                    }]
+                                    })
+                        if results:
+                            return results
     except Exception as e:
-        print(f"India Postal API error: {e}")
+        print(f"India Post API error: {e}")
 
-    return []
+    # 3. Fallback matching pre-configured Indian list
+    matched = [c for c in INDIAN_FALLBACK_CITIES if pin in c["name"]]
+    return matched
 
 async def search_cities(query: str) -> List[Dict[str, Any]]:
+    """
+    Search exclusively for Indian cities, towns, villages, and PIN codes.
+    Outside India locations are strictly excluded.
+    """
     if not query or len(query.strip()) < 2:
         return []
 
     clean_q = query.strip()
 
-    # If query contains digits (e.g. 110001, 400001, 560001), try pincode lookup first
-    if any(char.isdigit() for char in clean_q):
+    # If query contains 6-digit PIN code or is purely digits, execute PIN code lookup
+    pin_match = re.search(r'\b[1-9][0-9]{5}\b', clean_q)
+    if pin_match or (clean_q.isdigit() and len(clean_q) in [5, 6]):
         pin_results = await search_pincode(clean_q)
         if pin_results:
             return pin_results
 
+    results: List[Dict[str, Any]] = []
+    seen_coords = set()
+
+    # 1. Open-Meteo Geocoding — Strictly filtered for India (country_code == 'IN')
     try:
-        async with httpx.AsyncClient(timeout=5.0) as client:
+        async with httpx.AsyncClient(headers=HTTP_HEADERS, timeout=4.0) as client:
             resp = await client.get(
                 OPEN_METEO_GEOCODING_URL,
-                params={"name": clean_q, "count": 8, "language": "en", "format": "json"}
+                params={"name": clean_q, "count": 15, "language": "en", "format": "json"}
             )
             if resp.status_code == 200:
                 data = resp.json()
-                results = []
                 for item in data.get("results", []):
-                    results.append({
-                        "name": item.get("name"),
-                        "country": item.get("country", ""),
-                        "admin1": item.get("admin1", ""),
-                        "latitude": item.get("latitude"),
-                        "longitude": item.get("longitude"),
-                        "timezone": item.get("timezone", "UTC")
-                    })
-                if results:
-                    return results
+                    # STRICT FILTER: India only
+                    if str(item.get("country_code", "")).upper() == "IN" or str(item.get("country", "")).lower() == "india":
+                        searchable_text = f"{item.get('name', '')} {item.get('admin1', '')}".lower()
+                        if clean_q.lower() not in searchable_text:
+                            continue
+                        lat = float(item.get("latitude"))
+                        lon = float(item.get("longitude"))
+                        coord_key = (round(lat, 3), round(lon, 3))
+                        if coord_key not in seen_coords:
+                            seen_coords.add(coord_key)
+                            results.append({
+                                "name": item.get("name"),
+                                "country": "India",
+                                "admin1": item.get("admin1", ""),
+                                "latitude": lat,
+                                "longitude": lon,
+                                "timezone": item.get("timezone", "Asia/Kolkata")
+                            })
     except Exception as e:
-        print(f"Geocoding error: {e}")
-    
-    # Pre-built fallback popular cities and pin codes if query matches
-    fallback_cities = [
-        {"name": "Connaught Place, New Delhi (PIN: 110001)", "country": "India", "admin1": "Delhi", "latitude": 28.6333, "longitude": 77.2167, "timezone": "Asia/Kolkata"},
-        {"name": "Fort, Mumbai (PIN: 400001)", "country": "India", "admin1": "Maharashtra", "latitude": 18.9333, "longitude": 72.8333, "timezone": "Asia/Kolkata"},
-        {"name": "MG Road, Bengaluru (PIN: 560001)", "country": "India", "admin1": "Karnataka", "latitude": 12.9750, "longitude": 77.6083, "timezone": "Asia/Kolkata"},
-        {"name": "New Delhi", "country": "India", "admin1": "Delhi", "latitude": 28.6139, "longitude": 77.2090, "timezone": "Asia/Kolkata"},
-        {"name": "Mumbai", "country": "India", "admin1": "Maharashtra", "latitude": 19.0760, "longitude": 72.8777, "timezone": "Asia/Kolkata"},
-        {"name": "Bengaluru", "country": "India", "admin1": "Karnataka", "latitude": 12.9716, "longitude": 77.5946, "timezone": "Asia/Kolkata"},
-        {"name": "London", "country": "United Kingdom", "admin1": "England", "latitude": 51.5074, "longitude": -0.1278, "timezone": "Europe/London"},
-        {"name": "New York", "country": "United States", "admin1": "New York", "latitude": 40.7128, "longitude": -74.0060, "timezone": "America/New_York"},
-        {"name": "Tokyo", "country": "Japan", "admin1": "Tokyo", "latitude": 35.6762, "longitude": 139.6503, "timezone": "Asia/Tokyo"},
-        {"name": "Sydney", "country": "Australia", "admin1": "New South Wales", "latitude": -33.8688, "longitude": 151.2093, "timezone": "Australia/Sydney"},
+        print(f"Open-Meteo geocoding error: {e}")
+
+    # 2. OpenStreetMap Nominatim — Specifically searches Indian towns, villages, tehsils, hamlets
+    try:
+        async with httpx.AsyncClient(headers=HTTP_HEADERS, timeout=4.0) as client:
+            resp = await client.get(
+                "https://nominatim.openstreetmap.org/search",
+                params={
+                    "q": clean_q,
+                    "countrycodes": "in",
+                    "format": "json",
+                    "addressdetails": 1,
+                    "limit": 8
+                }
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                for it in data:
+                    addr = it.get("address", {})
+                    country_code = addr.get("country_code", "").lower()
+                    if country_code != "in":
+                        continue
+                    if clean_q.lower() not in it.get("display_name", "").lower():
+                        continue
+
+                    # Determine place title (village, hamlet, town, city, suburb, etc.)
+                    place_name = (
+                        addr.get("village")
+                        or addr.get("town")
+                        or addr.get("city")
+                        or addr.get("hamlet")
+                        or addr.get("suburb")
+                        or addr.get("county")
+                        or it.get("name")
+                    )
+                    state = addr.get("state", "")
+                    postcode = addr.get("postcode")
+                    lat = float(it["lat"])
+                    lon = float(it["lon"])
+                    coord_key = (round(lat, 3), round(lon, 3))
+
+                    if coord_key not in seen_coords:
+                        seen_coords.add(coord_key)
+                        formatted_name = place_name
+                        if postcode and postcode.isdigit() and len(postcode) == 6:
+                            formatted_name = f"{place_name} (PIN: {postcode})"
+                        results.append({
+                            "name": formatted_name,
+                            "country": "India",
+                            "admin1": state,
+                            "latitude": lat,
+                            "longitude": lon,
+                            "timezone": "Asia/Kolkata"
+                        })
+    except Exception as e:
+        print(f"Nominatim town/village geocoding error: {e}")
+
+    if results:
+        relevant_results = [
+            result for result in results
+            if clean_q.lower() in f"{result.get('name', '')} {result.get('admin1', '')}".lower()
+        ]
+        if relevant_results:
+            return relevant_results
+
+    # 3. Fallback matching pre-built Indian cities/towns/villages
+    matched = [
+        c for c in INDIAN_FALLBACK_CITIES
+        if clean_q.lower() in c["name"].lower() or (c.get("admin1") and clean_q.lower() in c["admin1"].lower())
     ]
-    return [c for c in fallback_cities if clean_q.lower() in c["name"].lower() or clean_q.lower() in c["country"].lower()]
+    return matched
 
 async def fetch_full_environmental_data(lat: float, lon: float) -> Dict[str, Any]:
     """

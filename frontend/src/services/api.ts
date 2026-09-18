@@ -27,8 +27,11 @@ export async function searchLocationsApi(query: string): Promise<LocationItem[]>
     const res = await fetch(`${API_BASE_URL}/weather/search?q=${encodeURIComponent(cleanQ)}`);
     if (res.ok) {
       const data = await res.json();
-      if (data.results && data.results.length > 0) {
-        return data.results;
+        const indianResults = (data.results || []).filter(
+          (location: LocationItem) => location.country.trim().toLowerCase() === 'india'
+        );
+        if (indianResults.length > 0) {
+          return indianResults;
       }
     }
   } catch (err) {
@@ -65,10 +68,6 @@ export async function searchLocationsApi(query: string): Promise<LocationItem[]>
     { name: "New Delhi", country: "India", latitude: 28.6139, longitude: 77.2090 },
     { name: "Mumbai", country: "India", latitude: 19.0760, longitude: 72.8777 },
     { name: "Bengaluru", country: "India", latitude: 12.9716, longitude: 77.5946 },
-    { name: "London", country: "United Kingdom", latitude: 51.5074, longitude: -0.1278 },
-    { name: "New York", country: "United States", latitude: 40.7128, longitude: -74.0060 },
-    { name: "Tokyo", country: "Japan", latitude: 35.6762, longitude: 139.6503 },
-    { name: "Sydney", country: "Australia", latitude: -33.8688, longitude: 151.2093 },
   ];
   return defaultCities.filter(c => c.name.toLowerCase().includes(cleanQ.toLowerCase()) || c.country.toLowerCase().includes(cleanQ.toLowerCase()));
 }
@@ -83,7 +82,6 @@ export async function fetchSavedLocationsApi(): Promise<SavedLocation[]> {
   return [
     { id: 1, name: "New Delhi", country: "India", latitude: 28.6139, longitude: 77.2090, is_favorite: true },
     { id: 2, name: "Mumbai", country: "India", latitude: 19.0760, longitude: 72.8777, is_favorite: false },
-    { id: 3, name: "London", country: "United Kingdom", latitude: 51.5074, longitude: -0.1278, is_favorite: false }
   ];
 }
 

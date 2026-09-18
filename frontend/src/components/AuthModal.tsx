@@ -23,11 +23,11 @@ const TRADE_OPTIONS: {
 }[] = [
   { id: 'health',      name: 'Health-conscious',    desc: 'AQI, Pollen, UV & Allergy Index',      icon: HeartPulse,   color: 'from-emerald-500 to-teal-600'   },
   { id: 'fitness',     name: 'Outdoor Fitness',      desc: 'Best Running Hours & Heat Index',      icon: Dumbbell,     color: 'from-amber-500 to-orange-600'   },
-  { id: 'beach',       name: 'Beachgoer & Surfer',   desc: 'Waves, Swell, Tide & Water Temp',      icon: Waves,        color: 'from-cyan-500 to-blue-600'      },
+  { id: 'beach',       name: 'Beachgoer & Surfer',   desc: 'Waves, Swell, Tide & Water Temp',      icon: Waves,        color: 'from-amber-500 to-orange-600'   },
   { id: 'traveler',    name: 'Traveler',              desc: 'Flight Weather & Packing Advice',      icon: Plane,        color: 'from-indigo-500 to-violet-600'  },
   { id: 'family',      name: 'Parents & Families',   desc: 'School Commute & Rain Alerts',         icon: Baby,         color: 'from-pink-500 to-rose-600'      },
   { id: 'agriculture', name: 'Agriculture',           desc: 'Soil Moisture, Temp & Frost Alerts',   icon: Sprout,       color: 'from-lime-500 to-emerald-600'   },
-  { id: 'commuter',    name: 'Commuter',              desc: 'Highway Visibility & Traffic Hazards', icon: Car,          color: 'from-sky-500 to-indigo-600'     },
+  { id: 'commuter',    name: 'Commuter',              desc: 'Highway Visibility & Traffic Hazards', icon: Car,          color: 'from-amber-500 to-orange-600'   },
   { id: 'event',       name: 'Event Planner',         desc: 'Outdoor Comfort & Gathering Score',    icon: PartyPopper,  color: 'from-purple-500 to-fuchsia-600' },
   { id: 'custom',      name: 'Other / Custom Trade',  desc: 'Pilot, Photographer, Engineer…',       icon: Briefcase,    color: 'from-slate-600 to-slate-800'    },
 ];
@@ -139,15 +139,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-lg animate-fadeIn">
-      <div className="glass-card w-full max-w-2xl rounded-3xl p-6 lg:p-8 border border-slate-800 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-lg animate-fadeIn">
+      <div className="glass-card w-full max-w-2xl rounded-3xl p-6 lg:p-8 border border-amber-200 shadow-2xl relative max-h-[92vh] overflow-y-auto">
 
         {/* X button ONLY shown when a session already exists (profile management) */}
         {initialUser && (
           <button
             onClick={onClose}
             aria-label="Close"
-            className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="absolute top-5 right-5 p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -155,13 +155,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
         {/* ── Header ───────────────────────────────────────── */}
         <div className="text-center mb-6">
-          <div className="inline-flex p-3 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25 mb-3">
+          <div className="inline-flex p-3 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 mb-3">
             <CloudSun className="w-7 h-7" />
           </div>
           <h2 className="text-2xl font-extrabold text-white tracking-tight">
             {isRegister ? 'Create Your Mausam Account' : 'Welcome to Mausam'}
           </h2>
-          <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+          <p className="text-xs text-slate-200 mt-1 max-w-sm mx-auto">
             {isRegister
               ? 'Set up your personalized multi-domain weather intelligence dashboard'
               : 'Sign in to access your personalized weather & environmental dashboard'}
@@ -169,15 +169,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </div>
 
         {/* ── Tab Toggle ───────────────────────────────────── */}
-        <div className="flex rounded-xl bg-slate-900 p-1 mb-5 border border-slate-800">
+        <div className="flex rounded-xl bg-black p-1 mb-5 border border-amber-200">
           <button
             type="button"
             id="tab-signin"
             onClick={() => { setIsRegister(false); setError(''); }}
             className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
               !isRegister
-                ? 'bg-cyan-500 text-slate-950 shadow-md'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-amber-500 text-slate-950 shadow-md'
+                : 'text-slate-300 hover:text-white'
             }`}
           >
             Sign In
@@ -188,8 +188,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             onClick={() => { setIsRegister(true); setError(''); }}
             className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
               isRegister
-                ? 'bg-cyan-500 text-slate-950 shadow-md'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-amber-500 text-slate-950 shadow-md'
+                : 'text-slate-300 hover:text-white'
             }`}
           >
             Create Account
@@ -213,8 +213,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           {/* Name — Register only */}
           {isRegister && (
             <div>
-              <label htmlFor="auth-name" className="text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-cyan-400" /> Full Name
+              <label htmlFor="auth-name" className="text-xs font-semibold text-slate-200 mb-1.5 flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-amber-500" /> Full Name
               </label>
               <input
                 id="auth-name"
@@ -224,15 +224,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 value={name}
                 onChange={e => setName(e.target.value)}
                 placeholder="Enter your full name"
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-cyan-500 transition-colors"
+                className="w-full bg-black border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 transition-colors"
               />
             </div>
           )}
 
           {/* Email */}
           <div>
-            <label htmlFor="auth-email" className="text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-cyan-400" /> Email Address
+            <label htmlFor="auth-email" className="text-xs font-semibold text-slate-200 mb-1.5 flex items-center gap-1.5">
+              <Mail className="w-3.5 h-3.5 text-amber-500" /> Email Address
             </label>
             <input
               id="auth-email"
@@ -242,16 +242,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="name@example.com"
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-cyan-500 transition-colors"
+              className="w-full bg-[#f5efe7] border border-stone-300 rounded-xl px-3.5 py-2.5 text-xs text-stone-800 placeholder:text-stone-500 focus:outline-none focus:border-amber-500 transition-colors"
             />
           </div>
 
           {/* Password */}
           <div>
-            <label htmlFor="auth-password" className="text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-cyan-400" /> Password
+            <label htmlFor="auth-password" className="text-xs font-semibold text-slate-200 mb-1.5 flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-amber-500" /> Password
               {isRegister && (
-                <span className="text-slate-500 font-normal ml-1">— min. 6 characters</span>
+                <span className="text-slate-200 font-normal ml-1">— min. 6 characters</span>
               )}
             </label>
             <input
@@ -262,7 +262,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder={isRegister ? 'Create a strong password' : 'Enter your password'}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-cyan-500 transition-colors"
+              className="w-full bg-[#f5efe7] border border-stone-300 rounded-xl px-3.5 py-2.5 text-xs text-stone-800 placeholder:text-stone-500 focus:outline-none focus:border-amber-500 transition-colors"
             />
           </div>
 
@@ -270,10 +270,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           {isRegister && (
             <div className="space-y-3 pt-1">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
                   <Briefcase className="w-3.5 h-3.5" /> Your Weather Domains
                 </label>
-                <span className="text-[10px] font-semibold text-cyan-400 bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800/60">
+                <span className="text-[10px] font-semibold text-amber-500 bg-amber-950/80 px-2 py-0.5 rounded-full border border-amber-800/60">
                   {selectedPersonas.length} selected
                 </span>
               </div>
@@ -289,18 +289,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       onClick={() => handleTogglePersona(trade.id)}
                       className={`flex flex-col items-start p-2.5 rounded-2xl border text-left transition-all relative ${
                         isSelected
-                          ? 'bg-slate-900 border-cyan-400 ring-1 ring-cyan-400 shadow-md shadow-cyan-500/20'
-                          : 'bg-slate-900/50 border-slate-800/80 hover:bg-slate-900 hover:border-slate-700 opacity-70 hover:opacity-100'
+                          ? 'bg-black border-amber-400 ring-1 ring-amber-400 shadow-md shadow-amber-500/20'
+                          : 'bg-slate-900/50 border-slate-700 hover:bg-slate-900 hover:border-slate-600 opacity-70 hover:opacity-100'
                       }`}
                     >
                       {isSelected && (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 absolute top-2 right-2 fill-slate-950" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 absolute top-2 right-2 fill-black" />
                       )}
                       <div className={`p-1.5 rounded-lg mb-1.5 text-white bg-gradient-to-tr ${trade.color}`}>
                         <Icon className="w-3.5 h-3.5" />
                       </div>
-                      <span className="text-[11px] font-bold text-slate-200">{trade.name}</span>
-                      <span className="text-[9px] text-slate-400 mt-0.5 line-clamp-2 leading-relaxed">{trade.desc}</span>
+                      <span className="text-[11px] font-bold text-slate-100">{trade.name}</span>
+                      <span className="text-[9px] text-slate-100 mt-0.5 line-clamp-2 leading-relaxed">{trade.desc}</span>
                     </button>
                   );
                 })}
@@ -308,7 +308,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               {selectedPersonas.includes('custom') && (
                 <div>
-                  <label htmlFor="auth-trade" className="text-xs font-medium text-slate-300 mb-1 block">
+                  <label htmlFor="auth-trade" className="text-xs font-medium text-slate-200 mb-1 block">
                     Specify Your Profession
                   </label>
                   <input
@@ -318,7 +318,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={customTrade}
                     onChange={e => setCustomTrade(e.target.value)}
                     placeholder="e.g. Civil Engineer, Drone Pilot, Outdoor Photographer..."
-                    className="w-full bg-slate-900 border border-cyan-500/50 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                    className="w-full bg-black border border-amber-500/50 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   />
                 </div>
               )}
@@ -330,7 +330,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             type="submit"
             id="auth-submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-sm shadow-xl shadow-cyan-500/25 transition-all mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold text-sm shadow-xl shadow-amber-500/25 transition-all mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>

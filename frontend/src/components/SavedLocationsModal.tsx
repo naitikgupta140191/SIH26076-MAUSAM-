@@ -22,28 +22,28 @@ export const SavedLocationsModal: React.FC<SavedLocationsModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-      <div className="glass-card w-full max-w-lg rounded-3xl p-6 border border-slate-800 shadow-2xl relative">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-md animate-fadeIn">
+      <div className="glass-card w-full max-w-lg rounded-3xl p-6 border border-amber-200 shadow-2xl relative">
+        <div className="flex items-center justify-between border-b border-amber-100 pb-4 mb-4">
           <div className="flex items-center gap-2">
-            <Bookmark className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-lg font-bold text-white">Saved Destinations</h3>
+            <Bookmark className="w-5 h-5 text-amber-600" />
+            <h3 className="text-lg font-bold text-slate-800">Saved Destinations</h3>
           </div>
-          <button onClick={onClose} className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-800">
+          <button onClick={onClose} className="p-1 rounded-full text-slate-700 hover:text-slate-900 hover:bg-amber-100">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="space-y-3 mb-6 max-h-80 overflow-y-auto pr-1">
           {savedLocations.length === 0 ? (
-            <div className="text-center py-8 text-slate-400 text-sm">
+            <div className="text-center py-8 text-slate-700 text-sm">
               No saved locations yet. Save your favorite cities for instant access!
             </div>
           ) : (
             savedLocations.map((loc) => (
               <div
                 key={loc.id}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 transition-colors group"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-amber-100 hover:border-amber-200 transition-colors group"
               >
                 <button
                   onClick={() => {
@@ -57,21 +57,21 @@ export const SavedLocationsModal: React.FC<SavedLocationsModalProps> = ({
                   }}
                   className="flex items-center gap-3 text-left flex-1"
                 >
-                  <div className="p-2 rounded-xl bg-cyan-950 text-cyan-400 border border-cyan-800/80">
+                  <div className="p-2 rounded-xl bg-amber-100 text-amber-700 border border-amber-200">
                     <MapPin className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-slate-200 group-hover:text-cyan-300">
+                    <div className="text-sm font-bold text-slate-700 group-hover:text-amber-700">
                       {loc.name}
                     </div>
-                    <div className="text-xs text-slate-400">{loc.country}</div>
+                    <div className="text-xs text-slate-700">{loc.country}</div>
                   </div>
                 </button>
 
                 <button
                   onClick={() => onDeleteLocation(loc.id)}
                   title="Remove location"
-                  className="p-2 text-slate-500 hover:text-rose-400 hover:bg-slate-800 rounded-xl transition-colors"
+                  className="p-2 text-slate-700 hover:text-rose-500 hover:bg-amber-50 rounded-xl transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -85,7 +85,7 @@ export const SavedLocationsModal: React.FC<SavedLocationsModalProps> = ({
             onAddCurrentLocation();
             onClose();
           }}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold text-sm shadow-lg shadow-cyan-500/20 transition-all"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-semibold text-sm shadow-lg shadow-amber-500/20 transition-all"
         >
           <Plus className="w-4 h-4" /> Save Active Location
         </button>

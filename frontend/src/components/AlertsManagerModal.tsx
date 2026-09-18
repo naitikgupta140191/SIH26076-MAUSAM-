@@ -49,38 +49,38 @@ export const AlertsManagerModal: React.FC<AlertsManagerModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-      <div className="glass-card w-full max-w-xl rounded-3xl p-6 border border-slate-800 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-md animate-fadeIn">
+      <div className="glass-card w-full max-w-xl rounded-3xl p-6 border border-amber-200 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between border-b border-amber-100 pb-4 mb-4">
           <div className="flex items-center gap-2">
-            <Bell className="w-5 h-5 text-amber-400" />
-            <h3 className="text-lg font-bold text-white">Custom Threshold Alerts</h3>
+            <Bell className="w-5 h-5 text-amber-500" />
+            <h3 className="text-lg font-bold text-slate-800">Custom Threshold Alerts</h3>
           </div>
-          <button onClick={onClose} className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-800">
+          <button onClick={onClose} className="p-1 rounded-full text-slate-700 hover:text-slate-900 hover:bg-amber-100">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Existing Alerts */}
         <div className="space-y-3 mb-6">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Active Alert Rules</h4>
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700">Active Alert Rules</h4>
           {alerts.length === 0 ? (
-            <div className="p-4 text-center text-xs text-slate-400 bg-slate-900/60 rounded-xl border border-slate-800">
+            <div className="p-4 text-center text-xs text-slate-700 bg-amber-50 rounded-xl border border-amber-100">
               No custom threshold alerts created yet.
             </div>
           ) : (
             alerts.map((al, idx) => (
               <div
                 key={al.id || idx}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-amber-100"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-amber-950 text-amber-400 border border-amber-800">
+                  <div className="p-2 rounded-xl bg-amber-100 text-amber-600 border border-amber-200">
                     <ShieldAlert className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-slate-200">{al.alert_message}</div>
-                    <div className="text-xs text-slate-400">
+                    <div className="text-sm font-bold text-slate-700">{al.alert_message}</div>
+                    <div className="text-xs text-slate-700">
                       {al.location_name} • {al.persona.toUpperCase()} ({al.metric} {al.condition === 'gt' ? '>' : '<'} {al.threshold_value})
                     </div>
                   </div>
@@ -89,7 +89,7 @@ export const AlertsManagerModal: React.FC<AlertsManagerModalProps> = ({
                 {al.id && (
                   <button
                     onClick={() => onDeleteAlert(al.id!)}
-                    className="p-2 text-slate-500 hover:text-rose-400 hover:bg-slate-800 rounded-xl transition-colors"
+                    className="p-2 text-slate-700 hover:text-rose-500 hover:bg-amber-50 rounded-xl transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -100,18 +100,18 @@ export const AlertsManagerModal: React.FC<AlertsManagerModalProps> = ({
         </div>
 
         {/* Create New Alert Form */}
-        <form onSubmit={handleCreate} className="glass-card p-4 rounded-2xl border border-slate-800 space-y-4">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+        <form onSubmit={handleCreate} className="glass-card p-4 rounded-2xl border border-amber-100 space-y-4">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
             <Plus className="w-3.5 h-3.5" /> Create New Threshold Warning for {currentCity}
           </h4>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-slate-400 font-medium">Persona Category</label>
+              <label className="text-xs text-slate-700 font-medium">Persona Category</label>
               <select
                 value={persona}
                 onChange={(e) => setPersona(e.target.value as PersonaType)}
-                className="w-full mt-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                className="w-full mt-1 bg-[#f9f3eb] border border-amber-200 rounded-xl px-3 py-2 text-xs text-stone-800 focus:outline-none focus:border-amber-400"
               >
                 <option value="health">Health & AQI</option>
                 <option value="fitness">Fitness & Running</option>
@@ -125,11 +125,11 @@ export const AlertsManagerModal: React.FC<AlertsManagerModalProps> = ({
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 font-medium">Environmental Metric</label>
+              <label className="text-xs text-slate-700 font-medium">Environmental Metric</label>
               <select
                 value={metric}
                 onChange={(e) => setMetric(e.target.value)}
-                className="w-full mt-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                className="w-full mt-1 bg-[#f9f3eb] border border-amber-200 rounded-xl px-3 py-2 text-xs text-stone-800 focus:outline-none focus:border-amber-400"
               >
                 <option value="AQI">US AQI Index</option>
                 <option value="PM2.5">PM2.5 Dust (µg/m³)</option>
@@ -142,11 +142,11 @@ export const AlertsManagerModal: React.FC<AlertsManagerModalProps> = ({
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 font-medium">Condition</label>
+              <label className="text-xs text-slate-700 font-medium">Condition</label>
               <select
                 value={condition}
                 onChange={(e) => setCondition(e.target.value as 'gt' | 'lt')}
-                className="w-full mt-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                className="w-full mt-1 bg-[#f9f3eb] border border-amber-200 rounded-xl px-3 py-2 text-xs text-stone-800 focus:outline-none focus:border-amber-400"
               >
                 <option value="gt">Greater Than (&gt;)</option>
                 <option value="lt">Less Than (&lt;)</option>
@@ -154,25 +154,25 @@ export const AlertsManagerModal: React.FC<AlertsManagerModalProps> = ({
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 font-medium">Threshold Value</label>
+              <label className="text-xs text-slate-700 font-medium">Threshold Value</label>
               <input
                 type="number"
                 step="any"
                 value={threshold}
                 onChange={(e) => setThreshold(Number(e.target.value))}
-                className="w-full mt-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                className="w-full mt-1 bg-[#f9f3eb] border border-amber-200 rounded-xl px-3 py-2 text-xs text-stone-800 focus:outline-none focus:border-amber-400"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-xs text-slate-400 font-medium">Custom Alert Note</label>
+            <label className="text-xs text-slate-700 font-medium">Custom Alert Note</label>
             <input
               type="text"
               placeholder="e.g. Wear N95 Mask if AQI > 150"
               value={customMsg}
               onChange={(e) => setCustomMsg(e.target.value)}
-              className="w-full mt-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+              className="w-full mt-1 bg-[#f9f3eb] border border-amber-200 rounded-xl px-3 py-2 text-xs text-stone-800 focus:outline-none focus:border-amber-400"
             />
           </div>
 
