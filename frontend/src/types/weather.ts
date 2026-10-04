@@ -10,13 +10,16 @@ export type PersonaType =
   | 'custom';
 
 export interface UserProfile {
+  id?: number;
   name: string;
   email: string;
   primaryPersona: PersonaType;
   selectedPersonas?: PersonaType[];
   customTrade?: string;
+  token?: string;
   isLoggedIn: boolean;
 }
+
 
 export interface LocationItem {
   name: string;

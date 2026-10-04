@@ -72,9 +72,29 @@ export async function searchLocationsApi(query: string): Promise<LocationItem[]>
   return defaultCities.filter(c => c.name.toLowerCase().includes(cleanQ.toLowerCase()) || c.country.toLowerCase().includes(cleanQ.toLowerCase()));
 }
 
+function getAuthHeaders(): HeadersInit {
+  const saved = localStorage.getItem('mausam_user') || localStorage.getItem('auracast_user');
+  if (saved) {
+    try {
+      const user = JSON.parse(saved);
+      if (user && user.token) {
+        return {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        };
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  return { 'Content-Type': 'application/json' };
+}
+
 export async function fetchSavedLocationsApi(): Promise<SavedLocation[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/user/saved-locations`);
+    const res = await fetch(`${API_BASE_URL}/user/saved-locations`, {
+      headers: getAuthHeaders()
+    });
     if (res.ok) return await res.json();
   } catch (e) {
     console.warn("Saved locations API fallback", e);
@@ -89,7 +109,7 @@ export async function addSavedLocationApi(loc: { name: string; country: string; 
   try {
     const res = await fetch(`${API_BASE_URL}/user/saved-locations`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(loc)
     });
     if (res.ok) return await res.json();
@@ -99,9 +119,24 @@ export async function addSavedLocationApi(loc: { name: string; country: string; 
   return null;
 }
 
+export async function deleteSavedLocationApi(id: number): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/user/saved-locations/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    return res.ok;
+  } catch (e) {
+    console.warn("Delete saved location error", e);
+    return false;
+  }
+}
+
 export async function fetchCustomAlertsApi(): Promise<CustomAlert[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/alerts`);
+    const res = await fetch(`${API_BASE_URL}/alerts`, {
+      headers: getAuthHeaders()
+    });
     if (res.ok) return await res.json();
   } catch (e) {
     console.warn("Alerts API fallback", e);
@@ -116,7 +151,7 @@ export async function createCustomAlertApi(alert: CustomAlert): Promise<CustomAl
   try {
     const res = await fetch(`${API_BASE_URL}/alerts`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(alert)
     });
     if (res.ok) return await res.json();
@@ -126,7 +161,21 @@ export async function createCustomAlertApi(alert: CustomAlert): Promise<CustomAl
   return alert;
 }
 
+export async function deleteCustomAlertApi(id: number): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/alerts/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    return res.ok;
+  } catch (e) {
+    console.warn("Delete alert error", e);
+    return false;
+  }
+}
+
 // ── Auth API ──────────────────────────────────────────────────────────────────
+
 
 type AuthResult = { success: boolean; user?: Record<string, unknown>; error?: string };
 
@@ -247,9 +296,10 @@ function generateFallbackDashboard(lat: number, lon: number, persona: PersonaTyp
         { title: "Wave Height", value: "1.4 m", subtitle: "Clean Swell", color: "cyan" },
         { title: "Swell Period", value: "8.2 s", subtitle: "Wave consistency", color: "teal" },
         { title: "Water Temp", value: "23.5 °C", subtitle: "Coastal surface", color: "blue" },
-        { title: "Tide Timings", value: "High 09:40 AM | Low 04:15 PM", subtitle: "Semi-diurnal", color: "indigo" }
+        { title: "Tide Schedule", value: "N/A", subtitle: "Tide telemetry unavailable", color: "indigo" }
       ]
     },
+
     traveler: {
       headline: `Travel & Destination Briefing for ${city}`,
       summary: "Mild conditions expected. No flight cancellation hazards detected.",

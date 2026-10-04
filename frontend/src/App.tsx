@@ -4,9 +4,12 @@ import {
   fetchDashboardData,
   fetchSavedLocationsApi,
   addSavedLocationApi,
+  deleteSavedLocationApi,
   fetchCustomAlertsApi,
-  createCustomAlertApi
+  createCustomAlertApi,
+  deleteCustomAlertApi
 } from './services/api';
+
 import { Header } from './components/Header';
 import { PersonaSelector } from './components/PersonaSelector';
 import { PersonaDetailView } from './components/PersonaDetailView';
@@ -60,19 +63,28 @@ export const App: React.FC = () => {
   }, [currentCity, lat, lon, activePersona]);
 
   useEffect(() => {
-    fetchSavedLocationsApi().then(setSavedLocations);
-    fetchCustomAlertsApi().then(setCustomAlerts);
-  }, []);
+    if (currentUser?.token) {
+      fetchSavedLocationsApi().then(setSavedLocations);
+      fetchCustomAlertsApi().then(setCustomAlerts);
+    } else {
+      setSavedLocations([]);
+      setCustomAlerts([]);
+    }
+  }, [currentUser]);
 
   const handleLoginSuccess = (user: UserProfile) => {
     setCurrentUser(user);
     localStorage.setItem('mausam_user', JSON.stringify(user));
     const initial = user.selectedPersonas?.[0] || user.primaryPersona || 'health';
     setActivePersona(initial);
+    fetchSavedLocationsApi().then(setSavedLocations);
+    fetchCustomAlertsApi().then(setCustomAlerts);
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
+    setSavedLocations([]);
+    setCustomAlerts([]);
     localStorage.removeItem('mausam_user');
     localStorage.removeItem('auracast_user');
     setIsAuthOpen(true);
@@ -100,7 +112,8 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleDeleteSavedLocation = (id: number) => {
+  const handleDeleteSavedLocation = async (id: number) => {
+    await deleteSavedLocationApi(id);
     setSavedLocations(prev => prev.filter(l => l.id !== id));
   };
 
@@ -111,9 +124,11 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleDeleteAlert = (id: number) => {
+  const handleDeleteAlert = async (id: number) => {
+    await deleteCustomAlertApi(id);
     setCustomAlerts(prev => prev.filter(a => a.id !== id));
   };
+
 
   return (
     <div className="min-h-screen text-slate-800 flex flex-col font-sans">

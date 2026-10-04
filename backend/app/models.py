@@ -6,6 +6,7 @@ class SavedLocation(Base):
     __tablename__ = "saved_locations"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True, nullable=True)
     name = Column(String, index=True)
     country = Column(String, default="")
     latitude = Column(Float)
@@ -29,16 +30,18 @@ class UserPreference(Base):
     __tablename__ = "user_preferences"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String, default="default_user", index=True)
+    user_id = Column(String, index=True)
     default_persona = Column(String, default="health")
     temp_unit = Column(String, default="C") # C or F
     theme = Column(String, default="dark")
     notifications_enabled = Column(Boolean, default=True)
 
+
 class CustomAlert(Base):
     __tablename__ = "custom_alerts"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True, nullable=True)
     location_name = Column(String)
     latitude = Column(Float)
     longitude = Column(Float)
@@ -49,3 +52,4 @@ class CustomAlert(Base):
     alert_message = Column(String)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+

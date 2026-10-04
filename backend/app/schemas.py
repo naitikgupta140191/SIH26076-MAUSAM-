@@ -1,4 +1,5 @@
-from pydantic import BaseModel, ConfigDict, Field
+import json
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 
@@ -14,6 +15,7 @@ class SavedLocationCreate(SavedLocationBase):
 
 class SavedLocationResponse(SavedLocationBase):
     id: int
+    user_id: Optional[int] = None
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
@@ -45,6 +47,7 @@ class CustomAlertCreate(CustomAlertBase):
 
 class CustomAlertResponse(CustomAlertBase):
     id: int
+    user_id: Optional[int] = None
     is_active: bool
     created_at: datetime
 
@@ -110,7 +113,32 @@ class UserAuthResponse(BaseModel):
     name: str
     email: str
     primary_persona: str
-    selected_personas: str   # stored as JSON string in DB
+    selected_personas: List[str] = Field(default_factory=list)
     custom_trade: Optional[str] = None
+    access_token: Optional[str] = None
+    token_type: Optional[str] = "bearer"
 
     model_config = ConfigDict(from_attributes=True)
+
+    @field_validator("selected_personas", mode="before")
+    @classmethod
+    def parse_selected_personas(cls, v: Any) -> List[str]:
+        if v is None:
+            return []
+        if isinstance(v, list):
+            return [str(item) for item in v]
+        if isinstance(v, str):
+            v_str = v.strip()
+            if not v_str:
+                return []
+            try:
+                parsed = json.loads(v_str)
+                if isinstance(parsed, list):
+                    return [str(item) for item in parsed]
+                if isinstance(parsed, str):
+                    return [parsed]
+            except Exception:
+                return [v_str]
+        return []
+
+

@@ -5,6 +5,7 @@ import json
 from ..database import get_db
 from ..models import User
 from ..schemas import UserRegister, UserLogin, UserAuthResponse
+from ..security import create_access_token, get_current_user
 
 router = APIRouter(prefix="/api/auth", tags=["Auth"])
 
@@ -75,7 +76,18 @@ def register_user(user_in: UserRegister, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return new_user
+
+    token = create_access_token(user_id=new_user.id)
+    return UserAuthResponse(
+        id=new_user.id,
+        name=new_user.name,
+        email=new_user.email,
+        primary_persona=new_user.primary_persona,
+        selected_personas=new_user.selected_personas,
+        custom_trade=new_user.custom_trade,
+        access_token=token,
+        token_type="bearer"
+    )
 
 
 # ── Login ────────────────────────────────────────────────────────────────────
@@ -94,4 +106,22 @@ def login_user(user_in: UserLogin, db: Session = Depends(get_db)):
             status_code=401,
             detail="Incorrect password. Please try again."
         )
-    return user
+
+    token = create_access_token(user_id=user.id)
+    return UserAuthResponse(
+        id=user.id,
+        name=user.name,
+        email=user.email,
+        primary_persona=user.primary_persona,
+        selected_personas=user.selected_personas,
+        custom_trade=user.custom_trade,
+        access_token=token,
+        token_type="bearer"
+    )
+
+
+# ── Current User Profile ─────────────────────────────────────────────────────
+@router.get("/me", response_model=UserAuthResponse)
+def get_current_user_profile(current_user: User = Depends(get_current_user)):
+    return current_user
+

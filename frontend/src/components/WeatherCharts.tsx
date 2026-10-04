@@ -11,46 +11,46 @@ export const WeatherCharts: React.FC<WeatherChartsProps> = ({ hourlyForecast }) 
   const [activeTab, setActiveTab] = useState<'temp' | 'rain' | 'uv' | 'aqi'>('temp');
 
   return (
-    <div className="glass-card rounded-2xl p-6 border border-slate-800 my-6">
+    <div className="glass-card bg-white/90 rounded-2xl p-6 border border-amber-200/80 my-6 shadow-xs">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2 tracking-tight">
             <Activity className="w-4 h-4 text-amber-500" />
             24-Hour Environmental Dynamics Chart
           </h3>
-          <p className="text-xs text-slate-700">Interactive hourly forecast trends</p>
+          <p className="text-xs font-semibold text-slate-600">Interactive hourly forecast trends</p>
         </div>
 
         {/* Tab Controls */}
-        <div className="flex items-center gap-1.5 bg-white/70 p-1 rounded-xl border border-slate-200">
+        <div className="flex items-center gap-1.5 bg-amber-50/80 p-1 rounded-xl border border-amber-200">
           <button
             onClick={() => setActiveTab('temp')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              activeTab === 'temp' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-700 hover:text-slate-900'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeTab === 'temp' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-700 hover:text-slate-900'
             }`}
           >
             <Thermometer className="w-3.5 h-3.5" /> Temp (°C)
           </button>
           <button
             onClick={() => setActiveTab('rain')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              activeTab === 'rain' ? 'bg-orange-500 text-white shadow-md' : 'text-slate-700 hover:text-slate-900'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeTab === 'rain' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
             }`}
           >
             <CloudRain className="w-3.5 h-3.5" /> Rain (%)
           </button>
           <button
             onClick={() => setActiveTab('uv')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              activeTab === 'uv' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-700 hover:text-slate-900'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeTab === 'uv' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-700 hover:text-slate-900'
             }`}
           >
             <Sun className="w-3.5 h-3.5" /> UV Index
           </button>
           <button
             onClick={() => setActiveTab('aqi')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              activeTab === 'aqi' ? 'bg-emerald-500 text-slate-950 shadow-md' : 'text-slate-700 hover:text-slate-900'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeTab === 'aqi' ? 'bg-emerald-500 text-slate-950 shadow-xs' : 'text-slate-700 hover:text-slate-900'
             }`}
           >
             <Activity className="w-3.5 h-3.5" /> AQI
@@ -68,22 +68,22 @@ export const WeatherCharts: React.FC<WeatherChartsProps> = ({ hourlyForecast }) 
                   <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="time" stroke="#64748b" tick={{ fontSize: 11 }} />
-              <YAxis stroke="#64748b" tick={{ fontSize: 11 }} domain={['dataMin - 2', 'dataMax + 2']} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="time" stroke="#475569" tick={{ fontSize: 11, fontWeight: 'bold' }} />
+              <YAxis stroke="#475569" tick={{ fontSize: 11, fontWeight: 'bold' }} domain={['dataMin - 2', 'dataMax + 2']} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', color: '#f8fafc' }}
-                labelStyle={{ color: '#38bdf8', fontWeight: 'bold' }}
+                contentStyle={{ backgroundColor: '#ffffff', borderColor: '#fcd34d', borderRadius: '12px', color: '#0f172a', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                labelStyle={{ color: '#d97706', fontWeight: 'bold' }}
               />
               <Area type="monotone" dataKey="temp" name="Temperature (°C)" stroke="#f59e0b" strokeWidth={3} fillOpacity={1} fill="url(#tempGradient)" />
             </AreaChart>
           ) : activeTab === 'rain' ? (
             <BarChart data={hourlyForecast} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="time" stroke="#64748b" tick={{ fontSize: 11 }} />
-              <YAxis stroke="#64748b" tick={{ fontSize: 11 }} domain={[0, 100]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="time" stroke="#475569" tick={{ fontSize: 11, fontWeight: 'bold' }} />
+              <YAxis stroke="#475569" tick={{ fontSize: 11, fontWeight: 'bold' }} domain={[0, 100]} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', color: '#f8fafc' }}
+                contentStyle={{ backgroundColor: '#ffffff', borderColor: '#fcd34d', borderRadius: '12px', color: '#0f172a', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
               />
               <Bar dataKey="rain_prob" name="Rain Prob (%)" fill="#f59e0b" radius={[4, 4, 0, 0]} />
             </BarChart>
@@ -95,21 +95,21 @@ export const WeatherCharts: React.FC<WeatherChartsProps> = ({ hourlyForecast }) 
                   <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="time" stroke="#64748b" tick={{ fontSize: 11 }} />
-              <YAxis stroke="#64748b" tick={{ fontSize: 11 }} domain={[0, 12]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="time" stroke="#475569" tick={{ fontSize: 11, fontWeight: 'bold' }} />
+              <YAxis stroke="#475569" tick={{ fontSize: 11, fontWeight: 'bold' }} domain={[0, 12]} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', color: '#f8fafc' }}
+                contentStyle={{ backgroundColor: '#ffffff', borderColor: '#fcd34d', borderRadius: '12px', color: '#0f172a', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
               />
               <Area type="monotone" dataKey="uv" name="UV Index" stroke="#f59e0b" strokeWidth={3} fillOpacity={1} fill="url(#uvGradient)" />
             </AreaChart>
           ) : (
             <BarChart data={hourlyForecast} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="time" stroke="#64748b" tick={{ fontSize: 11 }} />
-              <YAxis stroke="#64748b" tick={{ fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="time" stroke="#475569" tick={{ fontSize: 11, fontWeight: 'bold' }} />
+              <YAxis stroke="#475569" tick={{ fontSize: 11, fontWeight: 'bold' }} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', color: '#f8fafc' }}
+                contentStyle={{ backgroundColor: '#ffffff', borderColor: '#fcd34d', borderRadius: '12px', color: '#0f172a', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
               />
               <Bar dataKey="aqi" name="US AQI Index" fill="#10b981" radius={[4, 4, 0, 0]} />
             </BarChart>

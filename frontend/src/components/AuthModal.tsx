@@ -41,14 +41,17 @@ function buildProfile(apiUser: Record<string, unknown>): UserProfile {
   } catch { /* keep default */ }
 
   return {
+    id:               (apiUser.id as number) || undefined,
     name:             (apiUser.name as string) || 'Mausam User',
     email:            (apiUser.email as string) || '',
     primaryPersona:   ((apiUser.primary_persona as string) || 'health') as PersonaType,
     selectedPersonas: parsedPersonas,
     customTrade:      (apiUser.custom_trade as string) || undefined,
+    token:            (apiUser.access_token as string) || undefined,
     isLoggedIn:       true,
   };
 }
+
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,

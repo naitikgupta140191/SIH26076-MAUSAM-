@@ -1,7 +1,7 @@
 from typing import Dict, Any, List
 import math
-import random
 from datetime import datetime
+
 
 def process_persona_insights(persona: str, raw_env: Dict[str, Any], city_name: str = "") -> Dict[str, Any]:
     w_curr = raw_env.get("weather", {}).get("current", {})
@@ -198,16 +198,17 @@ def process_persona_insights(persona: str, raw_env: Dict[str, Any], city_name: s
                 "wave_height_m": wave_h,
                 "wave_period_s": wave_period,
                 "water_temp_c": water_temp,
-                "high_tide": "10:30 AM (1.8m)",
-                "low_tide": "04:45 PM (0.4m)"
+                "tide": None,
+                "tide_available": False
             },
             "detailed_cards": [
                 {"title": "Wave Height", "value": f"{wave_h} m", "subtitle": "Swell condition", "color": "cyan"},
                 {"title": "Swell Period", "value": f"{wave_period} s", "subtitle": "Wave consistency", "color": "teal"},
                 {"title": "Water Temp", "value": f"{water_temp} °C", "subtitle": "Coastal surface temp", "color": "blue"},
-                {"title": "Tide Schedule", "value": "High 10:30 AM | Low 4:45 PM", "subtitle": "Semi-diurnal tide", "color": "indigo"}
+                {"title": "Tide Schedule", "value": "N/A", "subtitle": "Tide telemetry unavailable", "color": "indigo"}
             ]
         }
+
 
     elif persona == "traveler":
         # Travelers & Flight Persona
@@ -300,27 +301,62 @@ def process_persona_insights(persona: str, raw_env: Dict[str, Any], city_name: s
 
     elif persona == "agriculture":
         # Agriculture & Gardeners Persona
-        soil_m = round(random.uniform(0.18, 0.35), 2) # m³/m³ moisture
-        soil_t = round(temp_c - 1.5, 1)
+        # Extract real Open-Meteo soil moisture (0-1cm or 0-7cm depth in m³/m³)
+        soil_m_raw = None
+        for key in ["soil_moisture_0_to_1cm", "soil_moisture_0_to_7cm", "soil_moisture_0cm"]:
+            vals = w_hourly.get(key)
+            if vals and isinstance(vals, list):
+                valid_val = next((v for v in vals if v is not None and isinstance(v, (int, float))), None)
+                if valid_val is not None:
+                    soil_m_raw = float(valid_val)
+                    break
+
+        soil_m = round(soil_m_raw, 3) if soil_m_raw is not None else None
+
+        # Extract real soil temperature (0cm depth in °C)
+        soil_t_raw = None
+        for key in ["soil_temperature_0cm", "soil_temperature_0_to_7cm"]:
+            vals = w_hourly.get(key)
+            if vals and isinstance(vals, list):
+                valid_val = next((v for v in vals if v is not None and isinstance(v, (int, float))), None)
+                if valid_val is not None:
+                    soil_t_raw = float(valid_val)
+                    break
+        soil_t = round(soil_t_raw, 1) if soil_t_raw is not None else round(temp_c - 1.5, 1)
+
         rain_7day = round(sum(rain_probs[:24]) * 0.15, 1) # estimated total mm
+        min_temp = min(temps[:24]) if temps else temp_c
+        frost_risk = "No Frost Risk" if min_temp > 4 else "⚠️ Frost Warning! Cover sensitive crops."
 
-        frost_risk = "No Frost Risk" if min(temps[:24]) > 4 else "⚠️ Frost Warning! Cover sensitive crops."
-        
-        recs = [
-            f"🌱 Soil Moisture at 0-7cm depth: {soil_m} m³/m³ ({'Optimal' if 0.2 <= soil_m <= 0.32 else 'Dry - Irrigation Needed'}).",
-            f"❄️ Frost Alert: {frost_risk}",
-            f"🌧️ 7-Day Precipitation Outlook: ~{rain_7day} mm expected."
-        ]
+        recs = []
+        if soil_m is not None:
+            soil_status = "Optimal" if 0.2 <= soil_m <= 0.32 else ("Dry - Irrigation Needed" if soil_m < 0.2 else "High Moisture")
+            recs.append(f"🌱 Soil Moisture at root zone: {soil_m} m³/m³ ({soil_status}).")
+            if soil_m < 0.2:
+                recs.append("💧 Recommended Action: Deep watering early in the morning to prevent evaporation.")
+        else:
+            recs.append("🌱 Soil Moisture telemetry is unavailable for this location.")
 
-        if soil_m < 0.2:
-            recs.append("💧 Recommended Action: Deep watering early in the morning to prevent evaporation.")
+        recs.append(f"❄️ Frost Alert: {frost_risk}")
+        recs.append(f"🌧️ 7-Day Precipitation Outlook: ~{rain_7day} mm expected.")
+
+        if soil_m is not None:
+            score = 88 if 0.2 <= soil_m <= 0.32 and min_temp > 5 else 60
+            status_badge = "Optimal Soil Health" if soil_m >= 0.2 else "Irrigation Advisory"
+            moisture_display = f"{soil_m} m³/m³"
+            summary_soil = f"{soil_m} m³/m³"
+        else:
+            score = 75 if min_temp > 5 else 55
+            status_badge = "Moisture Telemetry N/A"
+            moisture_display = "N/A"
+            summary_soil = "N/A"
 
         return {
             "persona": "agriculture",
-            "score": 88 if 0.2 <= soil_m <= 0.32 and min(temps) > 5 else 60,
+            "score": score,
             "headline": f"Agricultural & Soil Intelligence",
-            "summary": f"Soil Temp: {soil_t}°C. Soil Moisture: {soil_m} m³/m³. Frost Status: {frost_risk}.",
-            "status_badge": "Optimal Soil Health" if soil_m >= 0.2 else "Irrigation Advisory",
+            "summary": f"Soil Temp: {soil_t}°C. Soil Moisture: {summary_soil}. Frost Status: {frost_risk}.",
+            "status_badge": status_badge,
             "recommendations": recs,
             "metrics": {
                 "soil_moisture": soil_m,
@@ -329,12 +365,13 @@ def process_persona_insights(persona: str, raw_env: Dict[str, Any], city_name: s
                 "rain_7day_mm": rain_7day
             },
             "detailed_cards": [
-                {"title": "Soil Moisture", "value": f"{soil_m} m³/m³", "subtitle": "Root zone 0-7cm", "color": "emerald"},
+                {"title": "Soil Moisture", "value": moisture_display, "subtitle": "Root zone 0-1cm" if soil_m is not None else "Telemetry unavailable", "color": "emerald"},
                 {"title": "Soil Temperature", "value": f"{soil_t} °C", "subtitle": "Germination suitability", "color": "amber"},
                 {"title": "Frost Hazard", "value": frost_risk, "subtitle": "Overnight temp floor", "color": "cyan"},
                 {"title": "Weekly Rain Forecast", "value": f"~{rain_7day} mm", "subtitle": "Expected accumulation", "color": "blue"}
             ]
         }
+
 
     elif persona == "commuter":
         # Commuters & Traffic Persona
@@ -417,6 +454,62 @@ def process_persona_insights(persona: str, raw_env: Dict[str, Any], city_name: s
             ]
         }
 
+    elif persona == "custom" or persona not in ["health", "fitness", "beach", "traveler", "family", "agriculture", "commuter", "event"]:
+        # Custom Trade & Specialized Profession Persona Engine
+        max_rain = max(rain_probs[:24]) if rain_probs else 0
+        max_uv = max(uv_list[:12]) if uv_list else 3.0
+        vis_km = (vis_list[0] / 1000.0) if vis_list else 10.0
+
+        # Calculate a deterministic operational score based on real weather telemetry
+        op_score = 100
+        if temp_c > 35 or temp_c < 5: op_score -= 25
+        if max_rain > 40: op_score -= 30
+        elif max_rain > 20: op_score -= 15
+        if wind_gusts > 40: op_score -= 20
+        if us_aqi > 150: op_score -= 20
+        if vis_km < 3.0: op_score -= 15
+
+        op_score = max(20, min(100, op_score))
+        status = "Favorable Field Conditions" if op_score >= 80 else "Moderate Operation Risk" if op_score >= 60 else "Adverse Weather Alert"
+
+        recs = [
+            f"🛠️ Operational Weather Status: {status} (Score: {op_score}/100)",
+            f"🌡️ Temperature & Wind: {temp_c:.1f}°C (Feels like {feels_like:.1f}°C), Wind Gusts: {wind_gusts:.1f} km/h.",
+            f"🌧️ Max Rain Probability: {max_rain}% across 24h timeline."
+        ]
+
+        if wind_gusts > 35:
+            recs.append("💨 High Wind Advisory: Caution for drone piloting, crane operations, and high-altitude work.")
+        if max_rain > 30:
+            recs.append("☔ Rain Advisory: Waterproof protection required for sensitive gear and outdoor tasks.")
+        if us_aqi > 100:
+            recs.append(f"😷 Air Quality Warning: US AQI is {us_aqi}. Respirator mask suggested for physical field work.")
+
+        return {
+            "persona": "custom",
+            "score": op_score,
+            "headline": f"Custom Trade & Operational Weather Rating: {status}",
+            "summary": f"Telemetry for {city_name or 'Location'}: Temp {temp_c:.1f}°C, AQI {us_aqi}, Max Rain {max_rain}%, Vis {vis_km:.1f}km.",
+            "status_badge": status,
+            "recommendations": recs,
+            "metrics": {
+                "op_score": op_score,
+                "temp_c": temp_c,
+                "feels_like_c": feels_like,
+                "humidity": humidity,
+                "wind_gusts_kph": wind_gusts,
+                "aqi": us_aqi,
+                "visibility_km": vis_km,
+                "rain_prob_max": max_rain
+            },
+            "detailed_cards": [
+                {"title": "Field Comfort", "value": f"{temp_c:.1f} °C", "subtitle": f"Feels like {feels_like:.1f} °C", "color": "sky"},
+                {"title": "Wind & Gusts", "value": f"{wind_gusts:.1f} km/h", "subtitle": "Equipment stability", "color": "amber" if wind_gusts > 30 else "emerald"},
+                {"title": "Air Quality (AQI)", "value": f"{us_aqi} US AQI", "subtitle": f"PM2.5: {pm25} µg/m³", "color": "rose" if us_aqi > 100 else "emerald"},
+                {"title": "Precipitation Risk", "value": f"{max_rain} %", "subtitle": "24h peak probability", "color": "blue" if max_rain > 30 else "teal"}
+            ]
+        }
+
     # Fallback default
     return {
         "persona": persona,
@@ -428,3 +521,4 @@ def process_persona_insights(persona: str, raw_env: Dict[str, Any], city_name: s
         "metrics": {},
         "detailed_cards": []
     }
+

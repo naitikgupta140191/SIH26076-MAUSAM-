@@ -12,18 +12,18 @@ interface PersonaDetailViewProps {
 }
 
 const colorStyles: Record<DetailedCard['color'], { bg: string; text: string; border: string }> = {
-  emerald: { bg: 'bg-emerald-950/40', text: 'text-emerald-400', border: 'border-emerald-800/40' },
-  amber: { bg: 'bg-amber-950/40', text: 'text-amber-400', border: 'border-amber-800/40' },
-  rose: { bg: 'bg-rose-950/40', text: 'text-rose-400', border: 'border-rose-800/40' },
-  sky: { bg: 'bg-amber-950/40', text: 'text-amber-400', border: 'border-amber-800/40' },
-  indigo: { bg: 'bg-orange-950/40', text: 'text-orange-400', border: 'border-orange-800/40' },
-  cyan: { bg: 'bg-yellow-950/40', text: 'text-yellow-400', border: 'border-yellow-800/40' },
-  violet: { bg: 'bg-amber-950/40', text: 'text-amber-400', border: 'border-amber-800/40' },
-  teal: { bg: 'bg-orange-950/40', text: 'text-orange-400', border: 'border-orange-800/40' },
-  orange: { bg: 'bg-orange-950/40', text: 'text-orange-400', border: 'border-orange-800/40' },
-  purple: { bg: 'bg-yellow-950/40', text: 'text-yellow-400', border: 'border-yellow-800/40' },
-  lime: { bg: 'bg-amber-950/40', text: 'text-amber-400', border: 'border-amber-800/40' },
-  blue: { bg: 'bg-amber-950/40', text: 'text-amber-400', border: 'border-amber-800/40' },
+  emerald: { bg: 'bg-emerald-50/90', text: 'text-emerald-700', border: 'border-emerald-200' },
+  amber: { bg: 'bg-amber-50/90', text: 'text-amber-700', border: 'border-amber-200' },
+  rose: { bg: 'bg-rose-50/90', text: 'text-rose-700', border: 'border-rose-200' },
+  sky: { bg: 'bg-amber-50/90', text: 'text-amber-700', border: 'border-amber-200' },
+  indigo: { bg: 'bg-orange-50/90', text: 'text-orange-700', border: 'border-orange-200' },
+  cyan: { bg: 'bg-yellow-50/90', text: 'text-yellow-700', border: 'border-yellow-200' },
+  violet: { bg: 'bg-amber-50/90', text: 'text-amber-700', border: 'border-amber-200' },
+  teal: { bg: 'bg-orange-50/90', text: 'text-orange-700', border: 'border-orange-200' },
+  orange: { bg: 'bg-orange-50/90', text: 'text-orange-700', border: 'border-orange-200' },
+  purple: { bg: 'bg-yellow-50/90', text: 'text-yellow-700', border: 'border-yellow-200' },
+  lime: { bg: 'bg-amber-50/90', text: 'text-amber-700', border: 'border-amber-200' },
+  blue: { bg: 'bg-amber-50/90', text: 'text-amber-700', border: 'border-amber-200' },
 };
 
 export const PersonaDetailView: React.FC<PersonaDetailViewProps> = ({
@@ -43,53 +43,53 @@ export const PersonaDetailView: React.FC<PersonaDetailViewProps> = ({
   return (
     <div className="w-full space-y-6">
       {/* Top Banner & Main Score */}
-      <div className="glass-card rounded-3xl p-6 lg:p-8 relative overflow-hidden border border-slate-800 shadow-2xl">
+      <div className="glass-card bg-white/90 rounded-3xl p-6 lg:p-8 relative overflow-hidden border border-amber-200/80 shadow-xl">
         <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-          <Sparkles className="w-48 h-48 text-amber-400" />
+          <Sparkles className="w-48 h-48 text-amber-500" />
         </div>
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div className="space-y-3 flex-1">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-950 border border-amber-800 text-amber-300">
+              <span className="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-amber-900 border border-amber-700 text-amber-200 shadow-xs">
                 {insight.status_badge}
               </span>
-              <span className="text-xs text-slate-200 flex items-center gap-1 font-mono">
-                <Activity className="w-3.5 h-3.5 text-amber-400" /> Real-time Persona Computation
+              <span className="text-xs text-amber-950 font-mono font-bold flex items-center gap-1">
+                <Activity className="w-3.5 h-3.5 text-amber-600" /> Real-time Persona Computation
               </span>
             </div>
 
-            <h2 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight leading-snug">
+            <h2 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight leading-snug">
               {insight.headline}
             </h2>
 
-            <p className="text-sm text-slate-100 leading-relaxed max-w-3xl">
+            <p className="text-sm font-semibold text-slate-700 leading-relaxed max-w-3xl">
               {insight.summary}
             </p>
 
             {/* Quick Metrics Bar */}
-            <div className="flex flex-wrap items-center gap-4 pt-2 text-xs font-medium text-slate-100">
-              <div className="flex items-center gap-1.5 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
-                <Thermometer className="w-4 h-4 text-rose-400" />
+            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-semibold text-slate-800">
+              <div className="flex items-center gap-1.5 bg-amber-50/90 px-3 py-1.5 rounded-lg border border-amber-200 shadow-xs">
+                <Thermometer className="w-4 h-4 text-rose-500" />
                 <span>{currentTemp.toFixed(1)}°C (Feels {feelsLike.toFixed(1)}°C)</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
-                <Droplets className="w-4 h-4 text-amber-400" />
+              <div className="flex items-center gap-1.5 bg-amber-50/90 px-3 py-1.5 rounded-lg border border-amber-200 shadow-xs">
+                <Droplets className="w-4 h-4 text-amber-600" />
                 <span>Humidity: {humidity}%</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
-                <Wind className="w-4 h-4 text-amber-400" />
+              <div className="flex items-center gap-1.5 bg-amber-50/90 px-3 py-1.5 rounded-lg border border-amber-200 shadow-xs">
+                <Wind className="w-4 h-4 text-amber-600" />
                 <span>Wind: {windKph.toFixed(1)} km/h</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
-                <span className="text-amber-400 font-bold">UV</span>
+              <div className="flex items-center gap-1.5 bg-amber-50/90 px-3 py-1.5 rounded-lg border border-amber-200 shadow-xs">
+                <span className="text-amber-600 font-bold">UV</span>
                 <span>Index: {uvIndex.toFixed(1)}</span>
               </div>
             </div>
           </div>
 
           {/* Persona Score Radial Gauge */}
-          <div className="flex flex-col items-center justify-center p-4 bg-slate-900/80 rounded-2xl border border-slate-800/80 min-w-[160px]">
+          <div className="flex flex-col items-center justify-center p-4 bg-slate-900 rounded-2xl border border-slate-800 min-w-[160px] shadow-xl">
             <div className="relative flex items-center justify-center">
               <svg className="w-24 h-24 transform -rotate-90">
                 <circle
@@ -124,12 +124,12 @@ export const PersonaDetailView: React.FC<PersonaDetailViewProps> = ({
                 <span className={`text-2xl font-black ${getScoreColor(insight.score)}`}>
                   {insight.score}
                 </span>
-                <span className="text-[10px] uppercase tracking-wider text-slate-200 font-bold">
-                  / 100 Score
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 font-bold">
+                  / 100 SCORE
                 </span>
               </div>
             </div>
-            <span className="text-xs font-semibold text-slate-100 mt-2">Suitability Index</span>
+            <span className="text-xs font-extrabold text-white mt-2 tracking-wide">Suitability Index</span>
           </div>
         </div>
       </div>
@@ -141,16 +141,16 @@ export const PersonaDetailView: React.FC<PersonaDetailViewProps> = ({
           return (
             <div
               key={idx}
-              className={`glass-card p-5 rounded-2xl border ${style.border} ${style.bg} hover:border-amber-500/40 transition-all`}
+              className={`glass-card p-5 rounded-2xl border ${style.border} ${style.bg} hover:border-amber-400 transition-all shadow-xs`}
             >
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-1">
+              <div className="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-1">
                 {card.title}
               </div>
               <div className={`text-2xl font-black ${style.text} my-1.5 tracking-tight`}>
                 {card.value}
               </div>
-              <div className="text-xs text-slate-200 flex items-center gap-1">
-                <Info className="w-3 h-3 text-slate-300" />
+              <div className="text-xs text-slate-600 flex items-center gap-1 font-medium">
+                <Info className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                 <span>{card.subtitle}</span>
               </div>
             </div>
@@ -159,12 +159,12 @@ export const PersonaDetailView: React.FC<PersonaDetailViewProps> = ({
       </div>
 
       {/* Smart Recommendations List */}
-      <div className="glass-card rounded-2xl p-6 border border-slate-800">
+      <div className="glass-card bg-white/90 rounded-2xl p-6 border border-amber-200/80 shadow-xs">
         <div className="flex items-center gap-2 mb-4">
-          <div className="p-1.5 rounded-lg bg-amber-950 text-amber-400 border border-amber-800">
+          <div className="p-1.5 rounded-lg bg-amber-500 text-white shadow-xs">
             <Sparkles className="w-4 h-4" />
           </div>
-          <h3 className="text-base font-bold text-slate-100">
+          <h3 className="text-base font-extrabold text-slate-900 tracking-tight">
             Smart Actionable Guidance for {insight.persona.toUpperCase()}
           </h3>
         </div>
@@ -173,10 +173,10 @@ export const PersonaDetailView: React.FC<PersonaDetailViewProps> = ({
           {insight.recommendations.map((rec, i) => (
             <div
               key={i}
-              className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:bg-slate-900 transition-colors"
+              className="flex items-start gap-3 p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 hover:bg-amber-100/60 transition-colors"
             >
-              <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-              <span className="text-sm font-medium text-slate-200 leading-relaxed">
+              <CheckCircle2 className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <span className="text-sm font-semibold text-slate-800 leading-relaxed">
                 {rec}
               </span>
             </div>

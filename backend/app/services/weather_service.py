@@ -1,12 +1,13 @@
+import asyncio
 import httpx
 from typing import Dict, Any, List, Optional
 import math
-import random
 
 OPEN_METEO_FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 OPEN_METEO_AIR_QUALITY_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
 OPEN_METEO_MARINE_URL = "https://marine-api.open-meteo.com/v1/marine"
 OPEN_METEO_GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
+
 
 # WMO Weather Interpretation Codes
 WMO_CODES = {
@@ -352,34 +353,30 @@ async def fetch_full_environmental_data(lat: float, lon: float) -> Dict[str, Any
         "timezone": "auto"
     }
 
-    weather_data = {}
-    aqi_data = {}
-    marine_data = {}
-
     async with httpx.AsyncClient(timeout=8.0) as client:
-        try:
-            w_res = await client.get(OPEN_METEO_FORECAST_URL, params=weather_params)
-            if w_res.status_code == 200:
-                weather_data = w_res.json()
-        except Exception as e:
-            print(f"Weather API error: {e}")
+        async def _fetch(url: str, params: dict) -> dict:
+            try:
+                res = await client.get(url, params=params)
+                if res.status_code == 200:
+                    return res.json()
+            except Exception as e:
+                print(f"API fetch error for {url}: {e}")
+            return {}
 
-        try:
-            a_res = await client.get(OPEN_METEO_AIR_QUALITY_URL, params=aqi_params)
-            if a_res.status_code == 200:
-                aqi_data = a_res.json()
-        except Exception as e:
-            print(f"AQI API error: {e}")
+        results = await asyncio.gather(
+            _fetch(OPEN_METEO_FORECAST_URL, weather_params),
+            _fetch(OPEN_METEO_AIR_QUALITY_URL, aqi_params),
+            _fetch(OPEN_METEO_MARINE_URL, marine_params),
+            return_exceptions=True
+        )
 
-        try:
-            m_res = await client.get(OPEN_METEO_MARINE_URL, params=marine_params)
-            if m_res.status_code == 200:
-                marine_data = m_res.json()
-        except Exception as e:
-            print(f"Marine API error: {e}")
+        weather_data = results[0] if isinstance(results[0], dict) else {}
+        aqi_data = results[1] if isinstance(results[1], dict) else {}
+        marine_data = results[2] if isinstance(results[2], dict) else {}
 
     return {
         "weather": weather_data,
         "aqi": aqi_data,
         "marine": marine_data
     }
+
